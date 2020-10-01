@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2013-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,21 +10,25 @@
 'use strict';
 
 module.exports = (moduleName, instanceMethods) => {
-  const RealComponent = require.requireActual(moduleName);
+  const RealComponent = jest.requireActual(moduleName);
   const React = require('react');
 
   const SuperClass =
     typeof RealComponent === 'function' ? RealComponent : React.Component;
 
-  const Component = class extends SuperClass {
-    render() {
-      const name =
-        RealComponent.displayName ||
-        RealComponent.name ||
-        (RealComponent.render // handle React.forwardRef
-          ? RealComponent.render.displayName || RealComponent.render.name
-          : 'Unknown');
+  const name =
+    RealComponent.displayName ||
+    RealComponent.name ||
+    (RealComponent.render // handle React.forwardRef
+      ? RealComponent.render.displayName || RealComponent.render.name
+      : 'Unknown');
 
+  const nameWithoutPrefix = name.replace(/^(RCT|RK)/, '');
+
+  const Component = class extends SuperClass {
+    static displayName = 'Component';
+
+    render() {
       const props = Object.assign({}, RealComponent.defaultProps);
 
       if (this.props) {
@@ -40,13 +44,11 @@ module.exports = (moduleName, instanceMethods) => {
         });
       }
 
-      return React.createElement(
-        name.replace(/^(RCT|RK)/, ''),
-        props,
-        this.props.children,
-      );
+      return React.createElement(nameWithoutPrefix, props, this.props.children);
     }
   };
+
+  Component.displayName = nameWithoutPrefix;
 
   Object.keys(RealComponent).forEach(classStatic => {
     Component[classStatic] = RealComponent[classStatic];

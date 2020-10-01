@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -10,10 +10,9 @@
 
 'use strict';
 
-const EventEmitter = require('EventEmitter');
-const EventSubscriptionVendor = require('EventSubscriptionVendor');
-
-import type EmitterSubscription from 'EmitterSubscription';
+import EventEmitter from '../vendor/emitter/EventEmitter';
+import type EmitterSubscription from '../vendor/emitter/_EmitterSubscription';
+import EventSubscriptionVendor from '../vendor/emitter/_EventSubscriptionVendor';
 
 function checkNativeEventModule(eventType: ?string) {
   if (eventType) {
@@ -81,4 +80,4 @@ class RCTDeviceEventEmitter extends EventEmitter {
   }
 }
 
-module.exports = new RCTDeviceEventEmitter();
+export default (new RCTDeviceEventEmitter(): RCTDeviceEventEmitter);

@@ -1,5 +1,5 @@
 /**
- * Copyright (c) 2015-present, Facebook, Inc.
+ * Copyright (c) Facebook, Inc. and its affiliates.
  *
  * This source code is licensed under the MIT license found in the
  * LICENSE file in the root directory of this source tree.
@@ -9,11 +9,9 @@
 
 'use strict';
 
-const keyOf = require('fbjs/lib/keyOf');
-
-const X_DIM = keyOf({x: null});
-const Y_DIM = keyOf({y: null});
-const Z_DIM = keyOf({z: null});
+const X_DIM = 'x';
+const Y_DIM = 'y';
+const Z_DIM = 'z';
 
 const InitialOperationField = {
   transformTranslate: [0, 0, 0],
@@ -53,6 +51,9 @@ const computeNextValLinear = function(anim, from, to, value) {
   let nextVal = from * (1 - ratio) + to * ratio;
   if (hasRoundRatio) {
     nextVal = Math.round(roundRatio * nextVal) / roundRatio;
+  }
+  if (!isFinite(nextVal)) {
+    nextVal = null;
   }
   return nextVal;
 };
@@ -186,17 +187,17 @@ const buildStyleInterpolator = function(anims) {
           );
           didMatrix = true;
         } else {
-          var next = computeNextValLinearScalar(anim, value);
+          const next = computeNextValLinearScalar(anim, value);
           didChange = setNextValAndDetectChange(result, name, next, didChange);
         }
       } else if (anim.type === 'constant') {
-        var next = anim.value;
+        const next = anim.value;
         didChange = setNextValAndDetectChange(result, name, next, didChange);
       } else if (anim.type === 'step') {
-        var next = value >= anim.threshold ? anim.to : anim.from;
+        const next = value >= anim.threshold ? anim.to : anim.from;
         didChange = setNextValAndDetectChange(result, name, next, didChange);
       } else if (anim.type === 'identity') {
-        var next = value;
+        const next = value;
         didChange = setNextValAndDetectChange(result, name, next, didChange);
       }
     }
